@@ -4,13 +4,13 @@
 import { Command } from 'discord-graf';
 import { oneLine } from 'common-tags';
 
-export default class NowPlayingCommand extends Command {
+export default class MusicStatusCommand extends Command {
 	constructor(bot) {
 		super(bot, {
-			name: 'playing',
-			aliases: ['song', 'current', 'current-song', 'now-playing'],
+			name: 'status',
+			aliases: ['song', 'playing', 'current-song', 'now-playing'],
 			module: 'music',
-			memberName: 'playing',
+			memberName: 'status',
 			description: 'Shows the current status of the music.',
 			guildOnly: true
 		});

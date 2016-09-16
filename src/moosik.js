@@ -8,7 +8,7 @@ import version from './version';
 
 import PlaySongCommand from './commands/music/play';
 import SkipSongCommand from './commands/music/skip';
-import NowPlayingCommand from './commands/music/playing';
+import MusicStatusCommand from './commands/music/playing';
 import ViewQueueCommand from './commands/music/queue';
 import ChangeVolumeCommand from './commands/music/volume';
 import PauseSongCommand from './commands/music/pause';
@@ -26,7 +26,7 @@ export const client = bot
 	.registerCommands([
 		PlaySongCommand,
 		SkipSongCommand,
-		NowPlayingCommand,
+		MusicStatusCommand,
 		ViewQueueCommand,
 		ChangeVolumeCommand,
 		PauseSongCommand,
