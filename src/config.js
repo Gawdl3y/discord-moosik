@@ -7,6 +7,7 @@ import version from './version';
 
 bot.config.defaults.log = 'moosik.log';
 bot.config.defaults.storage = 'moosik-storage';
+bot.config.defaults.commandPrefix = 'moo';
 bot.config.loadDefaults();
 
 export const config = bot.config.yargs(yargs)
