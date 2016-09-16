@@ -6,7 +6,7 @@ export default class Song {
 		this.name = info.title;
 		this.url = url;
 		this.id = info.video_id;
-		this.length = info.length_seconds;
+		this.length = parseInt(info.length_seconds);
 		this.member = member;
 		this.dispatcher = null;
 	}

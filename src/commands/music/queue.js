@@ -2,7 +2,7 @@
 'use strict';
 
 import { Command } from 'discord-graf';
-import { stripIndents, oneLine } from 'common-tags';
+import { stripIndents, oneLineTrim } from 'common-tags';
 
 export default class ViewQueueCommand extends Command {
 	constructor(bot) {
@@ -27,7 +27,7 @@ export default class ViewQueueCommand extends Command {
 			__**Song queue, ${paginated.pageText}**__
 			${paginated.items.map(song => `**-** ${song.name} (${song.lengthString})`).join('\n')}
 			${paginated.maxPage > 1 ? `\nUse ${this.bot.util.usage(`queue <page>`, message.guild)} to view a specific page.` : ''}
-			Total queue time: ${oneLine`
+			Total queue time: ${oneLineTrim`
 				${Math.floor(totalLength / 3600)}:
 				${`0${Math.floor(totalLength % 3600 / 60)}`.slice(-2)}:
 				${`0${Math.floor(totalLength % 60)}`.slice(-2)}
