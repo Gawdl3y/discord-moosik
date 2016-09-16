@@ -26,7 +26,7 @@ export default class ViewQueueCommand extends Command {
 			__**Song queue, ${paginated.pageText}**__
 			${paginated.items.map(song => `**-** ${song.name} (${song.lengthString})`).join('\n')}
 
-			${paginated.maxPage > 1 ? `Use ${this.bot.util.usage(`characters <page>`, message.guild)} to view a specific page.` : ''}
+			${paginated.maxPage > 1 ? `Use ${this.bot.util.usage(`queue <page>`, message.guild)} to view a specific page.` : ''}
 		`;
 	}
 
