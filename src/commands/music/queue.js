@@ -2,7 +2,7 @@
 'use strict';
 
 import { Command } from 'discord-graf';
-import { stripIndents } from 'common-tags';
+import { stripIndents, oneLine } from 'common-tags';
 
 export default class ViewQueueCommand extends Command {
 	constructor(bot) {
@@ -22,11 +22,16 @@ export default class ViewQueueCommand extends Command {
 		const queue = this.queue.get(message.guild.id);
 		if(!queue) return 'There are no songs in the queue. Why not start the party yourself?';
 		const paginated = this.bot.util.paginate(queue.songs, page, Math.floor(this.bot.config.values.paginationItems));
+		const totalLength = queue.songs.reduce((prev, song) => prev + song.length, 0);
 		return stripIndents`
 			__**Song queue, ${paginated.pageText}**__
 			${paginated.items.map(song => `**-** ${song.name} (${song.lengthString})`).join('\n')}
-
-			${paginated.maxPage > 1 ? `Use ${this.bot.util.usage(`queue <page>`, message.guild)} to view a specific page.` : ''}
+			${paginated.maxPage > 1 ? `\nUse ${this.bot.util.usage(`queue <page>`, message.guild)} to view a specific page.` : ''}
+			Total queue time: ${oneLine`
+				${Math.floor(totalLength / 3600)}:
+				${`0${Math.floor(totalLength % 3600 / 60)}`.slice(-2)}:
+				${`0${Math.floor(totalLength % 60)}`.slice(-2)}
+			`}
 		`;
 	}
 
