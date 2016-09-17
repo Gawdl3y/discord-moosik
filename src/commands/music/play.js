@@ -70,6 +70,7 @@ export default class PlaySongCommand extends Command {
 							resolve('Unable to join your voice channel.');
 						});
 					} else {
+						this.queue.delete(message.guild.id);
 						resolve(result);
 					}
 				} else {
