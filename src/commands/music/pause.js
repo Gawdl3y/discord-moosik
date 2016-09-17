@@ -19,7 +19,9 @@ export default class PauseSongCommand extends Command {
 		const queue = this.queue.get(message.guild.id);
 		if(!queue) return `There isn\'t any music playing to pause, oh brilliant one.`;
 		if(!queue.songs[0].dispatcher) return 'It\'s kind of tough to pause a song that hasn\'t even begun playing yet.';
+		if(!queue.songs[0].playing) return 'Pausing a song that is already paused is a bad move. I wouldn\'t recommend it.';
 		queue.songs[0].dispatcher.pause();
+		queue.songs[0].playing = false;
 		return `Paused the music. Use ${this.bot.util.usage('resume', message.guild)} to continue playing.`;
 	}
 

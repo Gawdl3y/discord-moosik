@@ -137,6 +137,7 @@ export default class PlaySongCommand extends Command {
 			this.play(guild, queue.songs[0]);
 		}).setVolumeLogarithmic(queue.volume / 5);
 		song.dispatcher = dispatcher;
+		song.playing = true;
 	}
 
 	get votes() {

@@ -20,7 +20,9 @@ export default class ResumeSongCommand extends Command {
 		if(!queue.songs[0].dispatcher) {
 			return 'Pretty sure a song that hasn\'t actually begun playing yet could be considered "resumed".';
 		}
+		if(queue.songs[0].playing) return 'Resuming a song that isn\'t paused is a great move. Really fantastic.';
 		queue.songs[0].dispatcher.resume();
+		queue.songs[0].playing = true;
 		return 'Resumed the music. This party ain\'t over yet!';
 	}
 

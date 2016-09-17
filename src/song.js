@@ -9,6 +9,7 @@ export default class Song {
 		this.length = parseInt(info.length_seconds);
 		this.member = member;
 		this.dispatcher = null;
+		this.playing = false;
 	}
 
 	get username() {
