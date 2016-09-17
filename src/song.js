@@ -1,27 +1,26 @@
 'use babel';
 'use strict';
 
+import { Util } from 'discord-graf';
+
 export default class Song {
 	constructor(info, url, member) {
-		this.name = escapeMarkdown(info.title);
-		this.url = url;
+		this.name = Util.escapeMarkdown(info.title);
 		this.id = info.video_id;
 		this.length = parseInt(info.length_seconds);
+		this.url = url;
 		this.member = member;
 		this.dispatcher = null;
 		this.playing = false;
 	}
 
 	get username() {
-		const name = escapeMarkdown(this.member.nickname ? this.member.nickname : this.member.user.username);
-		return `${name}#${this.member.user.discriminator}`;
+		let name = `${this.member.user.username}#${this.member.user.discriminator}`;
+		if(this.member.nickname) name = `${this.member.nickname} (${name})`;
+		return Util.escapeMarkdown(name);
 	}
 
 	get lengthString() {
 		return `${Math.floor(this.length / 60)}:${`0${this.length % 60}`.slice(-2)}`;
 	}
-}
-
-function escapeMarkdown(text) {
-	return text.replace(/([^\\]|^)(\*|_|`|~)/g, '$1\\$2');
 }
