@@ -3,7 +3,7 @@
 
 export default class Song {
 	constructor(info, url, member) {
-		this.name = info.title;
+		this.name = escapeMarkdown(info.title);
 		this.url = url;
 		this.id = info.video_id;
 		this.length = parseInt(info.length_seconds);
@@ -13,11 +13,15 @@ export default class Song {
 	}
 
 	get username() {
-		const name = this.member.nickname ? this.member.nickname : this.member.user.username;
+		const name = escapeMarkdown(this.member.nickname ? this.member.nickname : this.member.user.username);
 		return `${name}#${this.member.user.discriminator}`;
 	}
 
 	get lengthString() {
 		return `${Math.floor(this.length / 60)}:${`0${this.length % 60}`.slice(-2)}`;
 	}
+}
+
+function escapeMarkdown(text) {
+	return text.replace(/([^\\]|^)(\*|_|`|~)/g, '$1\\$2');
 }
