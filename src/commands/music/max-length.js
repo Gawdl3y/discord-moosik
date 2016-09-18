@@ -31,7 +31,7 @@ export default class MaxLengthCommand extends Command {
 			}
 			if(args[0].toLowerCase() === 'default') {
 				this.bot.storage.settings.delete(message.guild, 'max-length');
-				return `Set the maximum song length to the default (currently ${config.maxLength}).`;
+				return `Set the maximum song length to the default (currently ${config.maxLength} minutes).`;
 			}
 			const maxLength = parseInt(args[0]);
 			if(isNaN(maxLength) || maxLength < 0) return `Invalid number provided.`;
