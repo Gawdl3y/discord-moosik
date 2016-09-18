@@ -107,7 +107,9 @@ export default class PlaySongCommand extends Command {
 
 		// Verify some stuff
 		if(!this.bot.permissions.isAdmin(message.guild, message.author)) {
-			if(video.duration.minutes > 15) return ':thumbsdown: No songs longer than 15 minutes!';
+			if(video.duration.minutes > 15) {
+				return `:thumbsdown: **${video.title}** (${video.lengthString}) is too long. No songs longer than 15 minutes!`;
+			}
 			if(queue.songs.some(song => song.id === video.id)) {
 				return `:thumbsdown: **${video.title}** is already queued.`;
 			}
