@@ -35,6 +35,7 @@ export default class ChangeVolumeCommand extends Command {
 			} else {
 				return `Invalid volume level. The dial goes from 0-10, baby.`;
 			}
+			if(volume === 11) volume = 10;
 		}
 
 		volume = Math.min(Math.max(volume, 0), volume === 11 ? 11 : 10);
