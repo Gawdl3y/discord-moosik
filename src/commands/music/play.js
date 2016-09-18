@@ -108,18 +108,20 @@ export default class PlaySongCommand extends Command {
 
 		// Verify some stuff
 		if(!this.bot.permissions.isAdmin(message.guild, message.author)) {
-			if(video.duration.minutes > 15) {
+			const maxLength = this.bot.storage.settings.getValue(message.guild, 'max-length', 15);
+			if(video.duration.minutes > maxLength) {
 				return oneLine`
 					:thumbsdown: **${video.title}**
 					(${Math.floor(video.durationSeconds / 60)}:${`0${video.durationSeconds % 60}`.slice(-2)})
-					is too long. No songs longer than 15 minutes!
+					is too long. No songs longer than ${maxLength} minutes!
 				`;
 			}
 			if(queue.songs.some(song => song.id === video.id)) {
 				return `:thumbsdown: **${video.title}** is already queued.`;
 			}
-			if(queue.songs.reduce((prev, song) => prev + song.member.id === message.author.id, 0) >= 5) {
-				return ':thumbsdown: You already have 5 songs in the queue. Don\'t hog all the airtime!';
+			const maxSongs = this.bot.storage.settings.getValue(message.guild, 'max-songs', 15);
+			if(queue.songs.reduce((prev, song) => prev + song.member.id === message.author.id, 0) >= maxSongs) {
+				return ':thumbsdown: You already have ${maxSongs} songs in the queue. Don\'t hog all the airtime!';
 			}
 		}
 

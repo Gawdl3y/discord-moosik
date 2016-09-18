@@ -14,6 +14,8 @@ import ChangeVolumeCommand from './commands/music/volume';
 import PauseSongCommand from './commands/music/pause';
 import ResumeSongCommand from './commands/music/resume';
 import StopMusicCommand from './commands/music/stop';
+import MaxLengthCommand from './commands/settings/max-length';
+import MaxSongsCommand from './commands/settings/max-songs';
 
 bot.logger.info(`Moosik v${version} is starting...`);
 
@@ -21,7 +23,8 @@ bot.logger.info(`Moosik v${version} is starting...`);
 export const client = bot
 	.registerDefaults()
 	.registerModules([
-		['music', 'Music']
+		['music', 'Music'],
+		['settings', 'Settings']
 	])
 	.registerCommands([
 		PlaySongCommand,
@@ -31,7 +34,9 @@ export const client = bot
 		ChangeVolumeCommand,
 		PauseSongCommand,
 		ResumeSongCommand,
-		StopMusicCommand
+		StopMusicCommand,
+		MaxLengthCommand,
+		MaxSongsCommand
 	])
 	.registerEvalObjects({
 		config: config,
