@@ -19,6 +19,7 @@ export default class MaxLengthCommand extends Command {
 				The default is 15. Set to 0 for unlimited.
 				Only administrators may change this setting.
 			`,
+			examples: ['max-length', 'max-length 10', 'max-length default'],
 			guildOnly: true
 		});
 	}

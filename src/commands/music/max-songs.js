@@ -18,6 +18,7 @@ export default class MaxSongsCommand extends Command {
 				The default is 5. Set to 0 for unlimited.
 				Only administrators may change this setting.
 			`,
+			examples: ['max-songs', 'max-songs 10', 'max-songs default'],
 			guildOnly: true
 		});
 	}
