@@ -4,14 +4,17 @@
 import { Util } from 'discord-graf';
 
 export default class Song {
-	constructor(info, url, member) {
-		this.name = Util.escapeMarkdown(info.title);
-		this.id = info.video_id;
-		this.length = parseInt(info.length_seconds);
-		this.url = url;
+	constructor(video, member) {
+		this.name = Util.escapeMarkdown(video.title);
+		this.id = video.id;
+		this.length = parseInt(video.durationSeconds);
 		this.member = member;
 		this.dispatcher = null;
 		this.playing = false;
+	}
+
+	get url() {
+		return `https://www.youtube.com/watch?v=${this.id}`;
 	}
 
 	get username() {

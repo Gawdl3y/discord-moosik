@@ -2,7 +2,8 @@
 'use strict';
 
 import { Command, CommandFormatError } from 'discord-graf';
-import yt from 'ytdl-core';
+import YouTube from 'simple-youtube-api';
+import ytdl from 'ytdl-core';
 import Song from '../../song';
 
 export default class PlaySongCommand extends Command {
@@ -17,6 +18,7 @@ export default class PlaySongCommand extends Command {
 		});
 
 		this.queue = new Map();
+		this.youtube = new YouTube(bot.config.values.youtubeKey);
 	}
 
 	run(message, args) {
@@ -38,57 +40,76 @@ export default class PlaySongCommand extends Command {
 				return;
 			}
 
-			yt.getInfo(url, (err, info) => {
-				if(err) {
-					resolve('Couldn\'t fetch the video information from YouTube. You may have supplied an invalid URL.');
-					return;
-				}
-
-				if(!queue) {
-					// Create the guild's queue
-					queue = {
-						textChannel: message.channel,
-						voiceChannel: voiceChannel,
-						connection: null,
-						songs: [],
-						volume: 6
-					};
-					this.queue.set(message.guild.id, queue);
-
-					// Try to add the song to the queue
-					const result = this.addSong(message, info, url);
-
-					if(result.startsWith(':thumbsup:')) {
-						// Join the voice channel and start playing
-						voiceChannel.join().then(connection => {
-							queue.connection = connection;
-							this.play(message.guild, queue.songs[0]);
-							resolve({ editable: false });
-						}).catch(err2 => {
-							this.bot.logger.error('Error occurred when joining voice channel.', err2);
-							this.queue.delete(message.guild.id);
-							resolve('Unable to join your voice channel.');
-						});
-					} else {
-						this.queue.delete(message.guild.id);
-						resolve(result);
-					}
-				} else {
-					// Just add the song
-					resolve({ reply: this.addSong(message, info, url), editable: false });
-				}
+			const locating = message.reply('Obtaining video details...');
+			this.youtube.getVideo(url).then(video => {
+				this.handleVideo(video, queue, voiceChannel, message, locating, resolve);
+			}).catch(() => {
+				// Search for a video
+				this.youtube.searchVideos(url, 1).then(videos => {
+					// Get the video's details
+					this.youtube.getVideoByID(videos[0].id).then(video2 => {
+						this.handleVideo(video2, queue, voiceChannel, message, locating, resolve);
+					}).catch(() => {
+						locating.then(msg => msg.edit(`${message.author}, Couldn't obtain the search result video's details.`));
+						resolve({ editable: false });
+					});
+				}).catch(() => {
+					locating.then(msg => msg.edit(`${message.author}, There were no search results.`));
+					resolve({ editable: false });
+				});
 			});
 		});
 	}
 
-	addSong(message, info, url) {
+	handleVideo(video, queue, voiceChannel, message, locating, resolve) {
+		if(!queue) {
+			// Create the guild's queue
+			queue = {
+				textChannel: message.channel,
+				voiceChannel: voiceChannel,
+				connection: null,
+				songs: [],
+				volume: 6
+			};
+			this.queue.set(message.guild.id, queue);
+
+			// Try to add the song to the queue
+			const result = this.addSong(message, video);
+
+			if(result.startsWith(':thumbsup:')) {
+				// Join the voice channel and start playing
+				queue.voiceChannel.join().then(connection => {
+					queue.connection = connection;
+					this.play(message.guild, queue.songs[0]);
+					locating.then(msg => msg.delete());
+					resolve({ editable: false });
+				}).catch(err2 => {
+					this.bot.logger.error('Error occurred when joining voice channel.', err2);
+					this.queue.delete(message.guild.id);
+					locating.then(msg => msg.edit(`${message.author}, Unable to join your voice channel.`));
+					resolve({ editable: false });
+				});
+			} else {
+				this.queue.delete(message.guild.id);
+				locating.then(msg => msg.edit(`${message.author}, ${result}`));
+				resolve({ editable: false });
+			}
+		} else {
+			// Just add the song
+			const result = this.addSong(message, video);
+			locating.then(msg => msg.edit(`${message.author}, ${result}`));
+			resolve({ editable: false });
+		}
+	}
+
+	addSong(message, video) {
 		const queue = this.queue.get(message.guild.id);
 
 		// Verify some stuff
 		if(!this.bot.permissions.isAdmin(message.guild, message.author)) {
-			if(info.length_seconds > 60 * 15) return ':thumbsdown: No songs longer than 15 minutes!';
-			if(queue.songs.some(song => song.id === info.video_id)) {
-				return `:thumbsdown: **${info.title}** is already queued.`;
+			if(video.duration.minutes > 15) return ':thumbsdown: No songs longer than 15 minutes!';
+			if(queue.songs.some(song => song.id === video.id)) {
+				return `:thumbsdown: **${video.title}** is already queued.`;
 			}
 			if(queue.songs.reduce((prev, song) => prev + song.member.id === message.author.id, 0) >= 5) {
 				return ':thumbsdown: You already have 5 songs in the queue. Don\'t hog all the airtime!';
@@ -96,8 +117,8 @@ export default class PlaySongCommand extends Command {
 		}
 
 		// Add the song to the queue
-		this.bot.logger.debug('Adding song to queue.', { song: info.video_id, guild: message.guild.id });
-		const song = new Song(info, url, message.member);
+		this.bot.logger.debug('Adding song to queue.', { song: video.id, guild: message.guild.id });
+		const song = new Song(video, message.member);
 		queue.songs.push(song);
 		return `:thumbsup: Queued up **${song.name}** (${song.lengthString}).`;
 	}
@@ -125,7 +146,7 @@ export default class PlaySongCommand extends Command {
 			`:musical_note: Playing **${song.name}** (${song.lengthString}), queued by ${song.username}.`
 		);
 		const dispatcher = queue.connection.playStream(
-			yt(song.url, { audioonly: true }),
+			ytdl(song.url, { audioonly: true }),
 			{ passes: this.bot.config.values.passes }
 		);
 		dispatcher.on('end', () => {

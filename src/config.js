@@ -18,6 +18,12 @@ export const config = bot.config.yargs(yargs)
 	.example('$0 completion', 'Outputs Bash completion script')
 	.epilogue(`Moosik v${version} by Schuyler Cebulskie (Gawdl3y): https://github.com/Gawdl3y/discord-moosik/`)
 
+	.option('youtube-key', {
+		type: 'string',
+		alias: 'Y',
+		describe: 'The YouTube API key to use',
+		group: 'Authentication:'
+	})
 	.option('passes', {
 		type: 'number',
 		default: 1,
