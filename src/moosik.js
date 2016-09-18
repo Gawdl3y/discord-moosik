@@ -8,7 +8,7 @@ import version from './version';
 
 import PlaySongCommand from './commands/music/play';
 import SkipSongCommand from './commands/music/skip';
-import MusicStatusCommand from './commands/music/playing';
+import MusicStatusCommand from './commands/music/status';
 import ViewQueueCommand from './commands/music/queue';
 import ChangeVolumeCommand from './commands/music/volume';
 import PauseSongCommand from './commands/music/pause';
