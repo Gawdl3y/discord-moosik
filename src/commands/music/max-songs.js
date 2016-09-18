@@ -15,7 +15,7 @@ export default class MaxSongsCommand extends Command {
 			usage: 'max-songs [amount|"default"]',
 			details: oneLine`
 				This is the maximum number of songs a user may have in the queue.
-				The default is 5. Set to 0 for unlimited.
+				The default is ${config.maxSongs}. Set to 0 for unlimited.
 				Only administrators may change this setting.
 			`,
 			examples: ['max-songs', 'max-songs 10', 'max-songs default'],
@@ -28,7 +28,11 @@ export default class MaxSongsCommand extends Command {
 			if(!this.bot.permissions.isAdmin(message.guild, message.author)) {
 				return `Only administrators may change the max songs.`;
 			}
-			const maxSongs = args[0].toLowerCase() === 'default' ? config.maxSongs : parseInt(args[0]);
+			if(args[0].toLowerCase() === 'default') {
+				this.bot.storage.settings.delete(message.guild, 'max-songs');
+				return `Set the maximum songs to the default (currently ${config.maxSongs}).`;
+			}
+			const maxSongs = parseInt(args[0]);
 			if(isNaN(maxSongs) || maxSongs < 0) return `Invalid number provided.`;
 			this.bot.storage.settings.save(new Setting(message.guild, 'max-songs', maxSongs));
 			return `Set the maximum songs to ${maxSongs}.`;

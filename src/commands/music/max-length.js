@@ -13,10 +13,10 @@ export default class MaxLengthCommand extends Command {
 			module: 'music',
 			memberName: 'max-length',
 			description: 'Shows or sets the max song length.',
-			usage: 'max-length [minutes]',
+			usage: 'max-length [minutes|"default"]',
 			details: oneLine`
 				This is the maximum length of a song that users may queue, in minutes.
-				The default is 15. Set to 0 for unlimited.
+				The default is ${config.maxLength}. Set to 0 for unlimited.
 				Only administrators may change this setting.
 			`,
 			examples: ['max-length', 'max-length 10', 'max-length default'],
@@ -29,7 +29,11 @@ export default class MaxLengthCommand extends Command {
 			if(!this.bot.permissions.isAdmin(message.guild, message.author)) {
 				return `Only administrators may change the max song length.`;
 			}
-			const maxLength = args[0].toLowerCase() === 'default' ? config.maxSongs : parseInt(args[0]);
+			if(args[0].toLowerCase() === 'default') {
+				this.bot.storage.settings.delete(message.guild, 'max-length');
+				return `Set the maximum song length to the default (currently ${config.maxLength}).`;
+			}
+			const maxLength = parseInt(args[0]);
 			if(isNaN(maxLength) || maxLength < 0) return `Invalid number provided.`;
 			this.bot.storage.settings.save(new Setting(message.guild, 'max-length', maxLength));
 			return `Set the maximum song length to ${maxLength} minutes.`;
