@@ -34,7 +34,7 @@ export const config = bot.config.yargs(yargs)
 	.option('max-length', {
 		type: 'number',
 		default: 15,
-		describe: 'Maximum length of a song.',
+		describe: 'Maximum length of a song (in minutes).',
 		group: 'General:'
 	})
 	.option('max-songs', {
