@@ -40,28 +40,28 @@ export default class PlaySongCommand extends Command {
 				return;
 			}
 
-			const locating = message.reply('Obtaining video details...');
+			const statusMsg = message.reply('Obtaining video details...');
 			this.youtube.getVideo(url).then(video => {
-				this.handleVideo(video, queue, voiceChannel, message, locating, resolve);
+				this.handleVideo(video, queue, voiceChannel, message, statusMsg, resolve);
 			}).catch(() => {
 				// Search for a video
 				this.youtube.searchVideos(url, 1).then(videos => {
 					// Get the video's details
 					this.youtube.getVideoByID(videos[0].id).then(video2 => {
-						this.handleVideo(video2, queue, voiceChannel, message, locating, resolve);
+						this.handleVideo(video2, queue, voiceChannel, message, statusMsg, resolve);
 					}).catch(() => {
-						locating.then(msg => msg.edit(`${message.author}, Couldn't obtain the search result video's details.`));
+						statusMsg.then(msg => msg.edit(`${message.author}, Couldn't obtain the search result video's details.`));
 						resolve({ editable: false });
 					});
 				}).catch(() => {
-					locating.then(msg => msg.edit(`${message.author}, There were no search results.`));
+					statusMsg.then(msg => msg.edit(`${message.author}, There were no search results.`));
 					resolve({ editable: false });
 				});
 			});
 		});
 	}
 
-	handleVideo(video, queue, voiceChannel, message, locating, resolve) {
+	handleVideo(video, queue, voiceChannel, message, statusMsg, resolve) {
 		if(!queue) {
 			// Create the guild's queue
 			queue = {
@@ -81,23 +81,23 @@ export default class PlaySongCommand extends Command {
 				queue.voiceChannel.join().then(connection => {
 					queue.connection = connection;
 					this.play(message.guild, queue.songs[0]);
-					locating.then(msg => msg.delete());
+					statusMsg.then(msg => msg.delete());
 					resolve({ editable: false });
 				}).catch(err2 => {
 					this.bot.logger.error('Error occurred when joining voice channel.', err2);
 					this.queue.delete(message.guild.id);
-					locating.then(msg => msg.edit(`${message.author}, Unable to join your voice channel.`));
+					statusMsg.then(msg => msg.edit(`${message.author}, Unable to join your voice channel.`));
 					resolve({ editable: false });
 				});
 			} else {
 				this.queue.delete(message.guild.id);
-				locating.then(msg => msg.edit(`${message.author}, ${result}`));
+				statusMsg.then(msg => msg.edit(`${message.author}, ${result}`));
 				resolve({ editable: false });
 			}
 		} else {
 			// Just add the song
 			const result = this.addSong(message, video);
-			locating.then(msg => msg.edit(`${message.author}, ${result}`));
+			statusMsg.then(msg => msg.edit(`${message.author}, ${result}`));
 			resolve({ editable: false });
 		}
 	}
