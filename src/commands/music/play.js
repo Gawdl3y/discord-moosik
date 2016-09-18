@@ -110,7 +110,7 @@ export default class PlaySongCommand extends Command {
 		// Verify some stuff
 		if(!this.bot.permissions.isAdmin(message.guild, message.author)) {
 			const maxLength = this.bot.storage.settings.getValue(message.guild, 'max-length', config.maxLength);
-			if(maxLength > 0 && video.duration.minutes > maxLength) {
+			if(maxLength > 0 && video.durationSeconds > maxLength * 60) {
 				return oneLine`
 					:thumbsdown: **${video.title}**
 					(${Math.floor(video.durationSeconds / 60)}:${`0${video.durationSeconds % 60}`.slice(-2)})
