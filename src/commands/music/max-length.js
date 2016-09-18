@@ -10,7 +10,7 @@ export default class MaxLengthCommand extends Command {
 		super(bot, {
 			name: 'max-length',
 			aliases: ['max-duration', 'max-song-length', 'max-song-duration'],
-			module: 'settings',
+			module: 'music',
 			memberName: 'max-length',
 			description: 'Shows or sets the max song length.',
 			usage: 'max-length [minutes]',

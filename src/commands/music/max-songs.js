@@ -9,7 +9,7 @@ export default class MaxSongsCommand extends Command {
 	constructor(bot) {
 		super(bot, {
 			name: 'max-songs',
-			module: 'settings',
+			module: 'music',
 			memberName: 'max-songs',
 			description: 'Shows or sets the max songs per user.',
 			usage: 'max-songs [amount|"default"]',
