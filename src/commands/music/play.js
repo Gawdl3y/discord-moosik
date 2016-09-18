@@ -110,7 +110,7 @@ export default class PlaySongCommand extends Command {
 		// Verify some stuff
 		if(!this.bot.permissions.isAdmin(message.guild, message.author)) {
 			const maxLength = this.bot.storage.settings.getValue(message.guild, 'max-length', config.maxLength);
-			if(video.duration.minutes > maxLength) {
+			if(maxLength > 0 && video.duration.minutes > maxLength) {
 				return oneLine`
 					:thumbsdown: **${video.title}**
 					(${Math.floor(video.durationSeconds / 60)}:${`0${video.durationSeconds % 60}`.slice(-2)})
@@ -121,7 +121,7 @@ export default class PlaySongCommand extends Command {
 				return `:thumbsdown: **${video.title}** is already queued.`;
 			}
 			const maxSongs = this.bot.storage.settings.getValue(message.guild, 'max-songs', config.maxSongs);
-			if(queue.songs.reduce((prev, song) => prev + song.member.id === message.author.id, 0) >= maxSongs) {
+			if(maxSongs > 0 && queue.songs.reduce((prev, song) => prev + song.member.id === message.author.id, 0) >= maxSongs) {
 				return ':thumbsdown: You already have ${maxSongs} songs in the queue. Don\'t hog all the airtime!';
 			}
 		}
