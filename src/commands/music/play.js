@@ -3,6 +3,7 @@
 
 import { Command, CommandFormatError } from 'discord-graf';
 import YouTube from 'simple-youtube-api';
+import { oneLine } from 'common-tags';
 import ytdl from 'ytdl-core';
 import Song from '../../song';
 
@@ -108,7 +109,11 @@ export default class PlaySongCommand extends Command {
 		// Verify some stuff
 		if(!this.bot.permissions.isAdmin(message.guild, message.author)) {
 			if(video.duration.minutes > 15) {
-				return `:thumbsdown: **${video.title}** (${video.lengthString}) is too long. No songs longer than 15 minutes!`;
+				return oneLine`
+					:thumbsdown: **${video.title}**
+					(${Math.floor(video.durationSeconds / 60)}:${`0${video.durationSeconds % 60}`.slice(-2)})
+					is too long. No songs longer than 15 minutes!
+				`;
 			}
 			if(queue.songs.some(song => song.id === video.id)) {
 				return `:thumbsdown: **${video.title}** is already queued.`;
