@@ -31,6 +31,18 @@ export const config = bot.config.yargs(yargs)
 		describe: 'Number of times to send voice packets',
 		group: 'General:'
 	})
+	.option('max-length', {
+		type: 'number',
+		default: 15,
+		describe: 'Maximum length of a song.',
+		group: 'General:'
+	})
+	.option('max-songs', {
+		type: 'number',
+		default: 5,
+		describe: 'Maximum songs a user may have in the queue.',
+		group: 'General:'
+	})
 
 	.help()
 	.alias('help', 'h')

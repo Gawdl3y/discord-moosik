@@ -3,6 +3,7 @@
 
 import { Command, Setting } from 'discord-graf';
 import { oneLine } from 'common-tags';
+import config from '../../config';
 
 export default class MaxLengthCommand extends Command {
 	constructor(bot) {
@@ -27,13 +28,13 @@ export default class MaxLengthCommand extends Command {
 			if(!this.bot.permissions.isAdmin(message.guild, message.author)) {
 				return `Only administrators may change the max song length.`;
 			}
-			const maxLength = parseInt(args[0]);
+			const maxLength = args[0].toLowerCase() === 'default' ? config.maxSongs : parseInt(args[0]);
 			if(isNaN(maxLength) || maxLength < 0) return `Invalid number provided.`;
 			this.bot.storage.settings.save(new Setting(message.guild, 'max-length', maxLength));
 			return `Set the maximum song length to ${maxLength} minutes.`;
 		}
 
-		const maxLength = this.bot.storage.settings.getValue(message.guild, 'max-length', 5);
+		const maxLength = this.bot.storage.settings.getValue(message.guild, 'max-length', config.maxLength);
 		return `The maximum length of a song is ${maxLength ? `${maxLength} minutes` : 'unlimited'}.`;
 	}
 }

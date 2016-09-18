@@ -3,6 +3,7 @@
 
 import { Command } from 'discord-graf';
 import { stripIndents, oneLineTrim } from 'common-tags';
+import config from '../../config';
 
 export default class ViewQueueCommand extends Command {
 	constructor(bot) {
@@ -21,7 +22,7 @@ export default class ViewQueueCommand extends Command {
 		const page = parseInt(args[0]) || 1;
 		const queue = this.queue.get(message.guild.id);
 		if(!queue) return 'There are no songs in the queue. Why not start the party yourself?';
-		const paginated = this.bot.util.paginate(queue.songs, page, Math.floor(this.bot.config.values.paginationItems));
+		const paginated = this.bot.util.paginate(queue.songs, page, Math.floor(config.paginationItems));
 		const totalLength = queue.songs.reduce((prev, song) => prev + song.length, 0);
 		return stripIndents`
 			__**Song queue, ${paginated.pageText}**__

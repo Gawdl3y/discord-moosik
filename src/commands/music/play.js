@@ -2,10 +2,11 @@
 'use strict';
 
 import { Command, CommandFormatError } from 'discord-graf';
-import YouTube from 'simple-youtube-api';
 import { oneLine } from 'common-tags';
+import YouTube from 'simple-youtube-api';
 import ytdl from 'ytdl-core';
 import Song from '../../song';
+import config from '../../config';
 
 export default class PlaySongCommand extends Command {
 	constructor(bot) {
@@ -108,7 +109,7 @@ export default class PlaySongCommand extends Command {
 
 		// Verify some stuff
 		if(!this.bot.permissions.isAdmin(message.guild, message.author)) {
-			const maxLength = this.bot.storage.settings.getValue(message.guild, 'max-length', 15);
+			const maxLength = this.bot.storage.settings.getValue(message.guild, 'max-length', config.maxLength);
 			if(video.duration.minutes > maxLength) {
 				return oneLine`
 					:thumbsdown: **${video.title}**
@@ -119,7 +120,7 @@ export default class PlaySongCommand extends Command {
 			if(queue.songs.some(song => song.id === video.id)) {
 				return `:thumbsdown: **${video.title}** is already queued.`;
 			}
-			const maxSongs = this.bot.storage.settings.getValue(message.guild, 'max-songs', 15);
+			const maxSongs = this.bot.storage.settings.getValue(message.guild, 'max-songs', config.maxSongs);
 			if(queue.songs.reduce((prev, song) => prev + song.member.id === message.author.id, 0) >= maxSongs) {
 				return ':thumbsdown: You already have ${maxSongs} songs in the queue. Don\'t hog all the airtime!';
 			}
@@ -156,7 +157,7 @@ export default class PlaySongCommand extends Command {
 		);
 		const dispatcher = queue.connection.playStream(
 			ytdl(song.url, { audioonly: true }),
-			{ passes: this.bot.config.values.passes }
+			{ passes: config.passes }
 		);
 		dispatcher.on('end', () => {
 			queue.songs.shift();
