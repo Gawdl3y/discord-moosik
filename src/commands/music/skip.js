@@ -94,7 +94,7 @@ export default class SkipSongCommand extends Command {
 		// Skip the song
 		const song = queue.songs[0];
 		song.dispatcher.end();
-		return `Skipped **${song.name}**.`;
+		return `Skipped **${song.name}** (${song.lengthString}).`;
 	}
 
 	setTimeout(vote) {
