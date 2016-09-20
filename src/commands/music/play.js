@@ -130,7 +130,7 @@ export default class PlaySongCommand extends Command {
 		this.bot.logger.debug('Adding song to queue.', { song: video.id, guild: message.guild.id });
 		const song = new Song(video, message.member);
 		queue.songs.push(song);
-		return `:thumbsup: Queued up **${song.name}** (${song.lengthString}).`;
+		return `:thumbsup: Queued up ${song}.`;
 	}
 
 	play(guild, song) {
@@ -153,7 +153,7 @@ export default class PlaySongCommand extends Command {
 
 		// Play the song
 		queue.textChannel.sendMessage(
-			`:musical_note: Playing **${song.name}** (${song.lengthString}), queued by ${song.username}.`
+			`:musical_note: Playing ${song}, queued by ${song.username}.`
 		);
 		const dispatcher = queue.connection.playStream(
 			ytdl(song.url, { audioonly: true }),

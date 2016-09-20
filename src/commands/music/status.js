@@ -23,7 +23,7 @@ export default class MusicStatusCommand extends Command {
 		const currentTime = song.dispatcher ? song.dispatcher.time / 1000 : 0;
 		const remainingTime = song.length - currentTime;
 		return oneLine`
-			Currently playing **${song.name}** (${song.lengthString}), requested by ${song.username}.
+			Currently playing ${song}, queued by ${song.username}.
 			We are ${Math.floor(currentTime / 60)}:${`0${Math.floor(currentTime % 60)}`.slice(-2)} into the song,
 			and have ${Math.floor(remainingTime / 60)}:${`0${Math.floor(remainingTime % 60)}`.slice(-2)} left.
 		`;

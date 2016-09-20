@@ -26,4 +26,8 @@ export default class Song {
 	get lengthString() {
 		return `${Math.floor(this.length / 60)}:${`0${this.length % 60}`.slice(-2)}`;
 	}
+
+	toString() {
+		return `**${this.name}** (${this.lengthString})`;
+	}
 }
