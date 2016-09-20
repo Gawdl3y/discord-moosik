@@ -2,7 +2,7 @@
 'use strict';
 
 import { Command } from 'discord-graf';
-import { stripIndents } from 'common-tags';
+import { stripIndents, oneLine } from 'common-tags';
 import Song from '../../song';
 import config from '../../config';
 
@@ -32,7 +32,12 @@ export default class ViewQueueCommand extends Command {
 			${paginated.items.map(song => `**-** ${song.name} (${song.lengthString})`).join('\n')}
 			${paginated.maxPage > 1 ? `\nUse ${this.bot.util.usage(`queue <page>`, message.guild)} to view a specific page.\n` : ''}
 			**Now playing:** ${currentSong.name} (queued by ${currentSong.username})
-			**Progress:** ${Song.timeString(currentTime)} / ${currentSong.timeLeft(currentTime)}${!currentSong.playing ? ' (paused)' : ''}
+			${oneLine`
+				**Progress:**
+				${!currentSong.playing ? 'Paused: ' : ''}${Song.timeString(currentTime)} /
+				${currentSong.lengthString}
+				(${currentSong.timeLeft(currentTime)} left)
+			`}
 			**Total queue time:** ${Song.timeString(totalLength)}
 		`;
 	}
