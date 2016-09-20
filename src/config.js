@@ -43,6 +43,12 @@ export const config = bot.config.yargs(yargs)
 		describe: 'Maximum songs a user may have in the queue.',
 		group: 'General:'
 	})
+	.option('default-volume', {
+		type: 'number',
+		default: 5,
+		describe: 'Default volume level for songs to play at.',
+		group: 'General:'
+	})
 
 	.help()
 	.alias('help', 'h')

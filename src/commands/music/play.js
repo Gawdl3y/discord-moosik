@@ -71,7 +71,7 @@ export default class PlaySongCommand extends Command {
 				voiceChannel: voiceChannel,
 				connection: null,
 				songs: [],
-				volume: 6
+				volume: this.bot.storage.settings.getValue(message.guild, 'default-volume', config.defaultVolume)
 			};
 			this.queue.set(message.guild.id, queue);
 
