@@ -15,7 +15,7 @@ export default class DefaultVolumeCommand extends Command {
 			usage: 'default-volume [level|"default"]',
 			details: oneLine`
 				This is the default volume level to play songs at.
-				The default is ${config.defaultVolume}. It can be in the range of 0-10.
+				The bot's default is ${config.defaultVolume}. It can be in the range of 0-10.
 				Only administrators may change this setting.
 			`,
 			examples: ['default-volume', 'default-volume 6', 'default-volume default'],
