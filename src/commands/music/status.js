@@ -3,6 +3,7 @@
 
 import { Command } from 'discord-graf';
 import { oneLine } from 'common-tags';
+import Song from '../../song';
 
 export default class MusicStatusCommand extends Command {
 	constructor(bot) {
@@ -21,11 +22,10 @@ export default class MusicStatusCommand extends Command {
 		if(!queue) return 'There isn\'t any music playing right now. You should get on that.';
 		const song = queue.songs[0];
 		const currentTime = song.dispatcher ? song.dispatcher.time / 1000 : 0;
-		const remainingTime = song.length - currentTime;
 		return oneLine`
 			Currently playing ${song}, queued by ${song.username}.
-			We are ${Math.floor(currentTime / 60)}:${`0${Math.floor(currentTime % 60)}`.slice(-2)} into the song,
-			and have ${Math.floor(remainingTime / 60)}:${`0${Math.floor(remainingTime % 60)}`.slice(-2)} left.
+			We are ${Song.timeString(currentTime)} into the song, and have ${song.timeLeft(currentTime)} left.
+			${!song.playing ? 'The music is paused.' : ''}
 		`;
 	}
 

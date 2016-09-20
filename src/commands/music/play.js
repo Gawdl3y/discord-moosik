@@ -1,7 +1,7 @@
 'use babel';
 'use strict';
 
-import { Command, CommandFormatError } from 'discord-graf';
+import { Command, CommandFormatError, Util } from 'discord-graf';
 import { oneLine } from 'common-tags';
 import YouTube from 'simple-youtube-api';
 import ytdl from 'ytdl-core';
@@ -112,17 +112,17 @@ export default class PlaySongCommand extends Command {
 			const maxLength = this.bot.storage.settings.getValue(message.guild, 'max-length', config.maxLength);
 			if(maxLength > 0 && video.durationSeconds > maxLength * 60) {
 				return oneLine`
-					:thumbsdown: **${video.title}**
-					(${Math.floor(video.durationSeconds / 60)}:${`0${video.durationSeconds % 60}`.slice(-2)})
+					:thumbsdown: **${Util.escapeMarkdown(video.title)}**
+					(${Song.timeString(video.durationSeconds)})
 					is too long. No songs longer than ${maxLength} minutes!
 				`;
 			}
 			if(queue.songs.some(song => song.id === video.id)) {
-				return `:thumbsdown: **${video.title}** is already queued.`;
+				return `:thumbsdown: **${Util.escapeMarkdown(video.title)}** is already queued.`;
 			}
 			const maxSongs = this.bot.storage.settings.getValue(message.guild, 'max-songs', config.maxSongs);
 			if(maxSongs > 0 && queue.songs.reduce((prev, song) => prev + song.member.id === message.author.id, 0) >= maxSongs) {
-				return ':thumbsdown: You already have ${maxSongs} songs in the queue. Don\'t hog all the airtime!';
+				return `:thumbsdown: You already have ${maxSongs} songs in the queue. Don't hog all the airtime!`;
 			}
 		}
 

@@ -2,6 +2,7 @@
 'use strict';
 
 import { Util } from 'discord-graf';
+import { oneLineTrim } from 'common-tags';
 
 export default class Song {
 	constructor(video, member) {
@@ -24,10 +25,24 @@ export default class Song {
 	}
 
 	get lengthString() {
-		return `${Math.floor(this.length / 60)}:${`0${this.length % 60}`.slice(-2)}`;
+		return this.constructor.timeString(this.length);
+	}
+
+	timeLeft(currentTime) {
+		return this.constructor.timeString(this.length - currentTime);
 	}
 
 	toString() {
 		return `**${this.name}** (${this.lengthString})`;
+	}
+
+	static timeString(seconds, forceHours = false) {
+		const hours = Math.floor(seconds / 3600);
+		const minutes = Math.floor(seconds % 3600 / 60);
+		return oneLineTrim`
+			${forceHours || hours >= 1 ? `${hours}:` : ''}
+			${hours >= 1 ? `0${minutes}`.slice(-2) : minutes}:
+			${`0${Math.floor(seconds % 60)}`.slice(-2)}
+		`;
 	}
 }
