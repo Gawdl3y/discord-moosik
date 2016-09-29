@@ -152,22 +152,31 @@ export default class PlaySongCommand extends Command {
 		}
 
 		// Play the song
-		queue.textChannel.sendMessage(
+		const playing = queue.textChannel.sendMessage(
 			`:musical_note: Playing ${song}, queued by ${song.username}.`
 		);
-		const dispatcher = queue.connection.playStream(
-			ytdl(song.url, { audioonly: true }),
-			{ passes: config.passes }
-		);
-		dispatcher.on('end', () => {
-			queue.songs.shift();
-			this.play(guild, queue.songs[0]);
-		}).on('error', (err) => {
-			this.bot.logger.error('Error occurred in stream dispatcher:', err);
-			queue.textChannel.sendMessage(`An error occurred while playing the song: \`${err}\``);
-			queue.songs.shift();
-			this.play(guild, queue.songs[0]);
-		}).setVolumeLogarithmic(queue.volume / 5);
+		let streamErrored = false;
+		const stream = ytdl(song.url, { audioonly: true })
+			.on('error', err => {
+				streamErrored = true;
+				this.bot.logger.error('Error occurred when streaming video:', err);
+				playing.then(msg => msg.edit(`:x: Couldn't play ${song}. What a drag!`));
+				queue.songs.shift();
+				this.play(guild, queue.songs[0]);
+			});
+		const dispatcher = queue.connection.playStream(stream, { passes: config.passes })
+			.on('end', () => {
+				if(streamErrored) return;
+				queue.songs.shift();
+				this.play(guild, queue.songs[0]);
+			})
+			.on('error', err => {
+				this.bot.logger.error('Error occurred in stream dispatcher:', err);
+				queue.textChannel.sendMessage(`An error occurred while playing the song: \`${err}\``);
+				queue.songs.shift();
+				this.play(guild, queue.songs[0]);
+			});
+		dispatcher.setVolumeLogarithmic(queue.volume / 5);
 		song.dispatcher = dispatcher;
 		song.playing = true;
 	}
