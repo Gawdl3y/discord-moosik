@@ -80,6 +80,7 @@ export default class PlaySongCommand extends Command {
 
 			if(result.startsWith(':thumbsup:')) {
 				// Join the voice channel and start playing
+				statusMsg.then(msg => msg.edit(`${message.author}, Joining your voice channel...`));
 				queue.voiceChannel.join().then(connection => {
 					queue.connection = connection;
 					this.play(message.guild, queue.songs[0]);
