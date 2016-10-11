@@ -42,11 +42,11 @@ export default class PlaySongCommand extends Command {
 				// Ensure the bot has permission to join and speak
 				const permissions = voiceChannel.permissionsFor(message.client.user);
 				if(!permissions.hasPermission('CONNECT')) {
-					resolve('I don\'t have permission to join your voice channel.');
+					resolve('I don\'t have permission to join your voice channel. No parties allowed there.');
 					return;
 				}
 				if(!permissions.hasPermission('SPEAK')) {
-					resolve('I don\'t have permission to speak in your voice channel.');
+					resolve('I don\'t have permission to speak in your voice channel. What a disappointment.');
 					return;
 				}
 			} else if(!queue.voiceChannel.members.has(message.author.id)) {
