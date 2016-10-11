@@ -7,6 +7,7 @@ export default class ChangeVolumeCommand extends Command {
 	constructor(bot) {
 		super(bot, {
 			name: 'volume',
+			aliases: ['set-volume', 'set-vol', 'vol'],
 			module: 'music',
 			memberName: 'volume',
 			description: 'Changes the volume.',
