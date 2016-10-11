@@ -15,7 +15,7 @@ export default class PlaySongCommand extends Command {
 			module: 'music',
 			memberName: 'play',
 			description: 'Adds a song to the queue.',
-			usage: 'play <YouTube URL>',
+			usage: 'play <YouTube URL/ID/Search>',
 			guildOnly: true
 		});
 
