@@ -77,26 +77,33 @@ export default class PlaySongCommand extends Command {
 
 			// Try to add the song to the queue
 			const result = this.addSong(message, video);
-
-			if(result.startsWith(':thumbsup:')) {
-				// Join the voice channel and start playing
-				statusMsg.then(msg => msg.edit(`${message.author}, Joining your voice channel...`));
-				queue.voiceChannel.join().then(connection => {
-					queue.connection = connection;
-					this.play(message.guild, queue.songs[0]);
-					statusMsg.then(msg => msg.delete());
-					resolve({ editable: false });
-				}).catch(err2 => {
-					this.bot.logger.error('Error occurred when joining voice channel.', err2);
-					this.queue.delete(message.guild.id);
-					statusMsg.then(msg => msg.edit(`${message.author}, Unable to join your voice channel.`));
-					resolve({ editable: false });
-				});
-			} else {
+			if(!result.startsWith(':thumbsup:')) {
 				this.queue.delete(message.guild.id);
 				statusMsg.then(msg => msg.edit(`${message.author}, ${result}`));
 				resolve({ editable: false });
+				return;
 			}
+
+			// Ensure the bot has permission to join
+			if(!message.channel.permissionsFor(message.client.user).hasPermission('CONNECT')) {
+				statusMsg.then(msg => msg.edit(`${message.author}, I don't have permission to join your voice channel.`));
+				resolve({ editable: false });
+				return;
+			}
+
+			// Join the voice channel and start playing
+			statusMsg.then(msg => msg.edit(`${message.author}, Joining your voice channel...`));
+			queue.voiceChannel.join().then(connection => {
+				queue.connection = connection;
+				this.play(message.guild, queue.songs[0]);
+				statusMsg.then(msg => msg.delete());
+				resolve({ editable: false });
+			}).catch(err2 => {
+				this.bot.logger.error('Error occurred when joining voice channel.', err2);
+				this.queue.delete(message.guild.id);
+				statusMsg.then(msg => msg.edit(`${message.author}, Unable to join your voice channel.`));
+				resolve({ editable: false });
+			});
 		} else {
 			// Just add the song
 			const result = this.addSong(message, video);
