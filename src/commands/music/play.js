@@ -27,14 +27,26 @@ export default class PlaySongCommand extends Command {
 		return new Promise(resolve => {
 			if(!args[0]) throw new CommandFormatError(this, message.guild);
 			const url = args[0].replace(/<(.+)>/g, '$1');
-			let queue = this.queue.get(message.guild.id);
+			const queue = this.queue.get(message.guild.id);
 
 			// Get the voice channel the user is in
 			let voiceChannel;
 			if(!queue) {
+				// Make sure the user is in a voice channel
 				voiceChannel = message.member.voiceChannel;
 				if(!voiceChannel || voiceChannel.type !== 'voice') {
 					resolve('You aren\'t in a voice channel, ya dingus.');
+					return;
+				}
+
+				// Ensure the bot has permission to join and speak
+				const permissions = voiceChannel.permissionsFor(message.client.user);
+				if(!permissions.hasPermission('CONNECT')) {
+					resolve({ reply: 'I don\'t have permission to join your voice channel.', editable: false });
+					return;
+				}
+				if(!permissions.hasPermission('SPEAK')) {
+					resolve({ reply: 'I don\'t have permission to speak in your voice channel.', editable: false });
 					return;
 				}
 			} else if(!queue.voiceChannel.members.has(message.author.id)) {
@@ -80,13 +92,6 @@ export default class PlaySongCommand extends Command {
 			if(!result.startsWith(':thumbsup:')) {
 				this.queue.delete(message.guild.id);
 				statusMsg.then(msg => msg.edit(`${message.author}, ${result}`));
-				resolve({ editable: false });
-				return;
-			}
-
-			// Ensure the bot has permission to join
-			if(!voiceChannel.permissionsFor(message.client.user).hasPermission('CONNECT')) {
-				statusMsg.then(msg => msg.edit(`${message.author}, I don't have permission to join your voice channel.`));
 				resolve({ editable: false });
 				return;
 			}
