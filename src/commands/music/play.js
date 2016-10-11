@@ -85,7 +85,7 @@ export default class PlaySongCommand extends Command {
 			}
 
 			// Ensure the bot has permission to join
-			if(!message.channel.permissionsFor(message.client.user).hasPermission('CONNECT')) {
+			if(!voiceChannel.permissionsFor(message.client.user).hasPermission('CONNECT')) {
 				statusMsg.then(msg => msg.edit(`${message.author}, I don't have permission to join your voice channel.`));
 				resolve({ editable: false });
 				return;
