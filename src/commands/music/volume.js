@@ -20,7 +20,7 @@ export default class ChangeVolumeCommand extends Command {
 
 	async run(message, args) {
 		const queue = this.queue.get(message.guild.id);
-		if(!queue) return `There isn\'t any music playing to change the volume of. Better queue some up!`;
+		if(!queue) return 'There isn\'t any music playing to change the volume of. Better queue some up!';
 		if(!args[0]) return `The dial is currently set to ${queue.volume}.`;
 		if(!queue.voiceChannel.members.has(message.author.id)) {
 			return `You're not in the voice channel. You better not be trying to mess with their mojo, man.`;
